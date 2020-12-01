@@ -32,8 +32,6 @@ struct JeopardyQ
 {
 	JeopardyQ() : jq({}) {};
 	JeopardyQ(vector<string>& v) : jq(v) {};
-
-private:
 	vector<string> jq;
 };
 
