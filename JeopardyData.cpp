@@ -2,7 +2,8 @@
 
 void JeopardyData::ReadFile()
 {
-	ifstream file("master_season1-36.tsv");
+	//ifstream file("master_season1-36.tsv");
+	ifstream file("test_file.tsv");
 
 	if (file.fail())
 	{
@@ -25,7 +26,8 @@ void JeopardyData::ReadFile()
 		unorderedData.insert(jq);
 		cout << "Reading File... " << (int)progress << "%\r";
 		cout.flush();
-		progress += progFactor;
+		//progress += progFactor;
+		progress += 1.0f; 
 	}
 
 	ShowConsoleCursor(true);
