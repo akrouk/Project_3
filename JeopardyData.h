@@ -1,6 +1,6 @@
 #include <vector>
-#include <set>
-#include <unordered_set>
+#include <map>
+#include <unordered_map>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -33,6 +33,17 @@ struct JeopardyQ
 	JeopardyQ() : jq({}) {};
 	JeopardyQ(vector<string>& v) : jq(v) {};
 	vector<string> jq;
+
+public:
+	string operator[](const int& i) const
+	{
+		if (i < 0 || i > 8)
+		{
+			cout << "Error: Index out of range." << endl;
+			exit(EXIT_FAILURE);
+		}
+		else return this->jq[i];
+	}
 };
 
 struct JeopardyData
@@ -40,10 +51,10 @@ struct JeopardyData
 	JeopardyData() { ReadFile(); }
 
 public:
-	set<JeopardyQ*> data;
-	unordered_set<JeopardyQ*> unorderedData;
+	map<string, vector<JeopardyQ>> data;
+	unordered_map<string, vector<JeopardyQ>> unorderedData;
 
 	void ReadFile();
-	JeopardyQ* ParseLine(string& line);
+	JeopardyQ ParseLine(string& line);
 	void ShowConsoleCursor(bool showCursor);
 };

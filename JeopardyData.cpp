@@ -2,8 +2,8 @@
 
 void JeopardyData::ReadFile()
 {
-	//ifstream file("master_season1-36.tsv");
-	ifstream file("test_file.tsv");
+	string filename = "test_file_only_5_per_cat.tsv";
+	ifstream file(filename);
 
 	if (file.fail())
 	{
@@ -21,9 +21,15 @@ void JeopardyData::ReadFile()
 	getline(file, line);
 	while (getline(file, line))
 	{
-		JeopardyQ* jq = ParseLine(line);
-		data.insert(jq);
-		unorderedData.insert(jq);
+		//Create JeopardyQ obj and a string of the its category 
+		JeopardyQ jq = ParseLine(line);
+		string category = jq[3];
+
+		//Add JeopardyQ to maps
+		data[category].push_back(jq);
+		unorderedData[category].push_back(jq);
+
+		//Progress bar 
 		cout << "Reading File... " << (int)progress << "%\r";
 		cout.flush();
 		//progress += progFactor;
@@ -31,11 +37,11 @@ void JeopardyData::ReadFile()
 	}
 
 	ShowConsoleCursor(true);
-	cout << "Reading File... " << (int)progress << endl;
+	cout << "Reading File... " << (int)progress << '%' << endl;
 	file.close();
 }
 
-JeopardyQ* JeopardyData::ParseLine(string& line)
+JeopardyQ JeopardyData::ParseLine(string& line)
 {
 	stringstream ss(line);
 	string temp;
@@ -44,7 +50,7 @@ JeopardyQ* JeopardyData::ParseLine(string& line)
 	while (getline(ss, temp, '\t'))
 		v.push_back(temp);
 
-	return new JeopardyQ(v);
+	return JeopardyQ(v);
 }
 
 void JeopardyData::ShowConsoleCursor(bool showCursor)
