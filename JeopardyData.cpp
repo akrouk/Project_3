@@ -33,7 +33,7 @@ void JeopardyData::ReadFile()
 		cout << "Reading File... " << (int)progress << "%\r";
 		cout.flush();
 		//progress += progFactor;
-		progress += 1.0f; 
+		progress += 1.0f;
 	}
 
 	ShowConsoleCursor(true);
@@ -62,4 +62,24 @@ void JeopardyData::ShowConsoleCursor(bool showCursor)
 	GetConsoleCursorInfo(out, &cursorInfo);
 	cursorInfo.bVisible = showCursor;
 	SetConsoleCursorInfo(out, &cursorInfo);
+}
+
+vector<JeopardyQ> JeopardyData::Find(string category)
+{
+	auto start = chrono::high_resolution_clock::now();
+	vector<JeopardyQ> result = this->data[category];
+	auto stop = chrono::high_resolution_clock::now();
+	if (result.size() == 0)
+	{
+		cout << "Category not found." << endl;
+		return result;
+	}
+	auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+	cout << "Ordered Map: Found category " << category << " in " << duration.count() << " microseconds." << endl;
+	start = chrono::high_resolution_clock::now();
+	result = this->unorderedData[category];
+	stop = chrono::high_resolution_clock::now();
+	duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+	cout << "Unordered Map: Found category " << category << " in " << duration.count() << " microseconds." << endl;
+	return result;
 }

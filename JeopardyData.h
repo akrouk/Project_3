@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <Windows.h>
+#include<chrono>
 #pragma once
 using namespace std;
 
@@ -57,4 +58,5 @@ public:
 	void ReadFile();
 	JeopardyQ ParseLine(string& line);
 	void ShowConsoleCursor(bool showCursor);
+	vector<JeopardyQ> Find(string category);
 };
