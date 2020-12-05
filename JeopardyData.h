@@ -7,6 +7,8 @@
 #include <iostream>
 #include <Windows.h>
 #include<chrono>
+#include <random>
+#include <algorithm>
 #pragma once
 using namespace std;
 
@@ -31,8 +33,8 @@ using namespace std;
 
 struct JeopardyQ
 {
-	JeopardyQ() : jq({}) {};
-	JeopardyQ(vector<string>& v) : jq(v) {};
+	JeopardyQ() : jq({}) {}
+	JeopardyQ(vector<string>& v) : jq(v) {}
 	vector<string> jq;
 
 public:
@@ -49,7 +51,7 @@ public:
 
 struct JeopardyData
 {
-	JeopardyData() { ReadFile(); }
+	JeopardyData() : data({}), unorderedData({}) { ReadFile(); }
 
 public:
 	map<string, vector<JeopardyQ>> data;
@@ -59,4 +61,5 @@ public:
 	JeopardyQ ParseLine(string& line);
 	void ShowConsoleCursor(bool showCursor);
 	vector<JeopardyQ> Find(string category);
+	vector<string> RandCategories();
 };

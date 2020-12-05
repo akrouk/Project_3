@@ -2,7 +2,7 @@
 
 void JeopardyData::ReadFile()
 {
-	string filename = "test_file_only_5_per_cat.tsv";
+	string filename = "master_season1-36.tsv";
 	ifstream file(filename);
 
 	if (file.fail())
@@ -21,6 +21,9 @@ void JeopardyData::ReadFile()
 	getline(file, line);
 	while (getline(file, line))
 	{
+		//Clean up the line before adding to the maps 
+		//As far as I can tell, this just involves removing all '\' chars from the line
+
 		//Create JeopardyQ obj and a string of the its category 
 		JeopardyQ jq = ParseLine(line);
 		string category = jq[3];
@@ -32,8 +35,8 @@ void JeopardyData::ReadFile()
 		//Progress bar 
 		cout << "Reading File... " << (int)progress << "%\r";
 		cout.flush();
-		//progress += progFactor;
-		progress += 1.0f;
+		progress += progFactor;
+		//progress += 1.0f;
 	}
 
 	ShowConsoleCursor(true);
@@ -82,4 +85,39 @@ vector<JeopardyQ> JeopardyData::Find(string category)
 	duration = chrono::duration_cast<chrono::microseconds>(stop - start);
 	cout << "Unordered Map: Found category " << category << " in " << duration.count() << " microseconds." << endl;
 	return result;
+}
+
+vector<string> JeopardyData::RandCategories()
+{
+	vector<string> categories; 
+	vector<int> indices; 
+
+	//From https://diego.assencio.com/?index=6890b8c50169ef45b74db135063c227c
+	random_device device; 
+	mt19937 generator(device());
+	uniform_int_distribution<int> dist(0, data.size() - 1);
+
+	for (int i = 0; i < 5; i++)
+	{
+		int randNum = dist(device);
+
+		if (find(indices.begin(), indices.end(), randNum) != indices.end())
+			i--;
+		else
+			indices.push_back(randNum);
+	}
+	
+	int j = 0; 
+	for (auto iter = data.begin(); iter != data.end(); iter++)
+	{
+		if (find(indices.begin(), indices.end(), j) != indices.end())
+			categories.push_back(iter->first);
+		
+		if (categories.size() == 5)
+			break;
+
+		j++;
+	}
+
+	return categories;
 }
