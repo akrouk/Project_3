@@ -51,7 +51,10 @@ JeopardyQ JeopardyData::ParseLine(string& line)
 	vector<string> v;
 
 	while (getline(ss, temp, '\t'))
+	{
+		temp.erase(remove(temp.begin(), temp.end(), '\\'), temp.end());
 		v.push_back(temp);
+	}
 
 	return JeopardyQ(v);
 }
@@ -89,11 +92,11 @@ vector<JeopardyQ> JeopardyData::Find(string category)
 
 vector<string> JeopardyData::RandCategories()
 {
-	vector<string> categories; 
-	vector<int> indices; 
+	vector<string> categories;
+	vector<int> indices;
 
 	//From https://diego.assencio.com/?index=6890b8c50169ef45b74db135063c227c
-	random_device device; 
+	random_device device;
 	mt19937 generator(device());
 	uniform_int_distribution<int> dist(0, data.size() - 1);
 
@@ -106,13 +109,13 @@ vector<string> JeopardyData::RandCategories()
 		else
 			indices.push_back(randNum);
 	}
-	
-	int j = 0; 
+
+	int j = 0;
 	for (auto iter = data.begin(); iter != data.end(); iter++)
 	{
 		if (find(indices.begin(), indices.end(), j) != indices.end())
 			categories.push_back(iter->first);
-		
+
 		if (categories.size() == 5)
 			break;
 
@@ -121,3 +124,5 @@ vector<string> JeopardyData::RandCategories()
 
 	return categories;
 }
+
+
