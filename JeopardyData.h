@@ -8,6 +8,7 @@
 #include <Windows.h>
 #include<chrono>
 #include <random>
+#include <unordered_set>
 #include <algorithm>
 #pragma once
 using namespace std;
@@ -33,10 +34,9 @@ using namespace std;
 
 struct JeopardyQ
 {
-	vector<string> jq;
-
 	JeopardyQ() : jq({}) {}
 	JeopardyQ(vector<string>& v) : jq(v) {}
+	vector<string> jq;
 
 public:
 	string operator[](const int& i) const
@@ -52,17 +52,17 @@ public:
 
 struct JeopardyData
 {
+	JeopardyData() : data({}), unorderedData({}) { ReadFile(); }
+
+public:
 	map<string, vector<JeopardyQ>> data;
 	unordered_map<string, vector<JeopardyQ>> unorderedData;
 
 	void ReadFile();
 	JeopardyQ ParseLine(string& line);
 	void ShowConsoleCursor(bool showCursor);
-	void CleanData();
-
-	JeopardyData() : data({}), unorderedData({}) { ReadFile(); }
-
-public:
 	vector<JeopardyQ> Find(string category);
+	vector<JeopardyQ> FindOrdered(string category);
+	vector<JeopardyQ> FindUnordered(string category);
 	vector<string> RandCategories();
 };
