@@ -19,6 +19,9 @@ void JeopardyData::ReadFile()
 
 	ShowConsoleCursor(false); //removes cursor so it doesn't spaz out while printing the progress
 	getline(file, line);
+
+	auto start = chrono::high_resolution_clock::now();
+
 	while (getline(file, line))
 	{
 		//Create JeopardyQ obj and a string of the its category 
@@ -27,17 +30,46 @@ void JeopardyData::ReadFile()
 
 		//Add JeopardyQ to maps
 		data[category].push_back(jq);
+
+		//Progress bar 
+		cout << "Populating Ordered Map... " << (int)progress << "%\r";
+		cout.flush();
+		progress += progFactor;
+	}
+
+	auto stop = chrono::high_resolution_clock::now();
+	auto duration = chrono::duration_cast<chrono::seconds>(stop - start);
+	cout << "Populating Ordered Map... " << (int)progress << '%' << endl;
+	cout << "Populated Ordered Map with Data in: " << duration.count() << " seconds\n"; 
+
+	file.clear();
+	file.seekg(0, ios::beg);
+	getline(file, line);
+	progress = 0.0f; 
+
+	start = chrono::high_resolution_clock::now();
+
+	while (getline(file, line))
+	{
+		//Create JeopardyQ obj and a string of the its category 
+		JeopardyQ jq = ParseLine(line);
+		string category = jq[3];
+
+		//Add JeopardyQ to maps
 		unorderedData[category].push_back(jq);
 
 		//Progress bar 
-		cout << "Reading File... " << (int)progress << "%\r";
+		cout << "Populating Unordered Map... " << (int)progress << "%\r";
 		cout.flush();
 		progress += progFactor;
-		//progress += 1.0f;
 	}
 
+	stop = chrono::high_resolution_clock::now();
+	duration = chrono::duration_cast<chrono::seconds>(stop - start);
+	cout << "Populating Unordered Map... " << (int)progress << '%' << endl;
+	cout << "Populated Unordered Map with Data in: " << duration.count() << " seconds\n";
+
 	ShowConsoleCursor(true);
-	cout << "Reading File... " << (int)progress << '%' << endl;
 	CleanData();
 	file.close();
 }
@@ -77,7 +109,7 @@ void JeopardyData::CleanData()
 	//iterate through both at the same time, erasing elements that don't have >= 5 JeopardyQs
 	//(this is necessary because Jeopardy boards have 5 questions per category - don't want unusable data)
 	//(with the master file, amount of elements left over is > 168,555)
-	//(11,121 categories are unusable)
+	//(11,121 categories are unusable; ~200,700 remaining in the maps)
 	while (iter1 != data.end() && iter2 != unorderedData.end())
 	{
 		if (iter1->second.size() < 5)
