@@ -2,7 +2,7 @@
 
 void JeopardyData::ReadFile()
 {
-	string filename = "test_file.tsv";
+	string filename = "master_season1-36.tsv";
 	ifstream file(filename);
 	if (file.fail())
 	{
