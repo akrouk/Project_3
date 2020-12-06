@@ -65,4 +65,5 @@ public:
 	vector<JeopardyQ> FindOrdered(string category);
 	vector<JeopardyQ> FindUnordered(string category);
 	vector<string> RandCategories();
+	void CleanData();
 };
