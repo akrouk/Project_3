@@ -21,9 +21,6 @@ void JeopardyData::ReadFile()
 	getline(file, line);
 	while (getline(file, line))
 	{
-		//Clean up the line before adding to the maps 
-		//As far as I can tell, this just involves removing all '\' chars from the line
-
 		//Create JeopardyQ obj and a string of the its category 
 		JeopardyQ jq = ParseLine(line);
 		string category = jq[3];
@@ -41,6 +38,7 @@ void JeopardyData::ReadFile()
 
 	ShowConsoleCursor(true);
 	cout << "Reading File... " << (int)progress << '%' << endl;
+	CleanData();
 	file.close();
 }
 
@@ -70,6 +68,30 @@ void JeopardyData::ShowConsoleCursor(bool showCursor)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
+void JeopardyData::CleanData()
+{
+	auto iter1 = data.begin();
+	auto iter2 = unorderedData.begin();
+
+	//data and unorderedData should ALWAYS be the same size, so there are no edge cases to account for
+	//iterate through both at the same time, erasing elements that don't have >= 5 JeopardyQs
+	//(this is necessary because Jeopardy boards have 5 questions per category - don't want unusable data)
+	//(with the master file, amount of elements left over is > 168,555)
+	//(11,121 categories are unusable)
+	while (iter1 != data.end() && iter2 != unorderedData.end())
+	{
+		if (iter1->second.size() < 5)
+			data.erase(iter1++);
+		else
+			iter1++;
+
+		if (iter2->second.size() < 5)
+			unorderedData.erase(iter2++);
+		else
+			iter2++;
+	}
+}
+
 vector<JeopardyQ> JeopardyData::Find(string category)
 {
 	auto start = chrono::high_resolution_clock::now();
@@ -92,14 +114,16 @@ vector<JeopardyQ> JeopardyData::Find(string category)
 
 vector<string> JeopardyData::RandCategories()
 {
-	vector<string> categories;
-	vector<int> indices;
+	vector<string> categories; 
+	vector<int> indices; 
 
 	//From https://diego.assencio.com/?index=6890b8c50169ef45b74db135063c227c
-	random_device device;
+	random_device device; 
 	mt19937 generator(device());
 	uniform_int_distribution<int> dist(0, data.size() - 1);
 
+	//Populate indices with 5 random nums between 0 and num of categories
+	//Using find function to avoid collisions (no repeat nums)
 	for (int i = 0; i < 5; i++)
 	{
 		int randNum = dist(device);
@@ -109,13 +133,14 @@ vector<string> JeopardyData::RandCategories()
 		else
 			indices.push_back(randNum);
 	}
-
-	int j = 0;
+	
+	//Populate categories with 5 random categories at the generated indices
+	int j = 0; 
 	for (auto iter = data.begin(); iter != data.end(); iter++)
 	{
 		if (find(indices.begin(), indices.end(), j) != indices.end())
 			categories.push_back(iter->first);
-
+		
 		if (categories.size() == 5)
 			break;
 
@@ -124,5 +149,3 @@ vector<string> JeopardyData::RandCategories()
 
 	return categories;
 }
-
-
